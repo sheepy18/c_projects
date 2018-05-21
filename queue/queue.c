@@ -1,5 +1,11 @@
 #include "queue.h"
 
+queue_t* create_thr(pthread_mutex_t* m) {
+    queue_t* newq = create();
+    newq->mtx = m;
+    return newq;
+}
+
 queue_t* create() {
    queue_t* newq = (queue_t*) malloc(sizeof(queue_t)); 
    newq->s = 10;
