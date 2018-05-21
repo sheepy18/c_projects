@@ -15,15 +15,41 @@ queue_t* create() {
 }
 
 void push(queue_t* q_arg, TYPE e) {
-    if(q_arg->s == q_arg->ce) 
+    pthread_mutex_lock(q_arg->mtx);
+    if(q_arg->s == q_arg->ce) {  
+       pthread_mutex_unlock(q_arg->mtx);
        return;
+    }
+
     q_arg->q[q_arg->ce] = e;
     (q_arg->ce)++;
+    pthread_mutex_unlock(q_arg->mtx);
 }
 
+long size(queue_t* q) {
+    pthread_mutex_lock(q->mtx);
+    long size = q->ce;
+    pthread_mutex_unlock(q->mtx);
+    return size;
+}
 
+long mem_size(queue_t* q ) {
+    pthread_mutex_lock(q->mtx);
+    long mem = q->s;
+    pthread_mutex_unlock(q->mtx);
+    return mem;
+}
 TYPE get(queue_t* q_arg) {
-    return q_arg->q[0];
+    pthread_mutex_lock(q_arg->mtx);
+    TYPE first = q_arg->q[0];
+    pthread_mutex_unlock(q_arg->mtx);
+    return first;
+}
+
+void print_q(queue_t* q) {
+    pthread_mutex_lock(q->mtx);
+    out_q(q);
+    pthread_mutex_unlock(q->mtx);
 }
 
 void out_q(queue_t* q_arg){

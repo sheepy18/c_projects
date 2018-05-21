@@ -25,7 +25,8 @@ void push(queue_t*, TYPE e);
 TYPE get(queue_t*);
 //size: get the current number of elements
 long size(queue_t*);
-
+//get the current max size of memory space that allocated
+long mem_size(queue_t*);
 //print queue to the std out: (1, ..., 20)
 void out_q(queue_t*);
 
