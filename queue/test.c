@@ -11,6 +11,8 @@ int main() {
     printf("q1 get: %li \n", (long int) (get(q1)));
 	printf("q1 size: %li \n", size(q1));
     printf("q1 mem_size: %li \n", mem_size(q1));
-    print_q(q1);
+    out_q(q1);
+    pop(q1);
+    out_q(q1);
     return 0;
 }
