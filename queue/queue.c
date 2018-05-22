@@ -27,6 +27,10 @@ queue_t* create_thr(pthread_mutex_t* m) {
     return newq;
 }
 
+void increment_mem(queue_t* q_arg) {
+    q_arg->s += q_arg->s;
+}
+
 //not thread safe
 void increment(queue_t* q_arg){
     (q_arg->ce)++;
@@ -37,12 +41,16 @@ void decrement(queue_t* q_arg) {
     (q_arg->ce)--;
 }
 
-void allocMem(queue_t* q_arg) { 
+void allocMem(queue_t* q_arg, int isPop) { 
+    if(!isPop) {
+        q_arg->q =(void*) realloc(q_arg->q, q_arg->s);
+        return;
+    }
     TYPE* oldMem;
     oldMem = q_arg->q;
     q_arg->q = malloc(sizeof(TYPE) * q_arg->s);
     for(int i = 0; i < q_arg->ce; i++) {
-       q_arg->q[i] = oldMem[i+1]; 
+       q_arg->q[i] = oldMem[i + 1]; 
     }
     free(oldMem);
 }
@@ -50,15 +58,15 @@ void allocMem(queue_t* q_arg) {
 void pop(queue_t* q_arg) {
     pthread_mutex_lock(q_arg->mtx); 
     decrement(q_arg);
-    allocMem(q_arg);
+    allocMem(q_arg, 1);
     pthread_mutex_unlock(q_arg->mtx);
 }
 
 void push(queue_t* q_arg, TYPE e) {
     pthread_mutex_lock(q_arg->mtx);
     if(q_arg->s == q_arg->ce) {  
-       pthread_mutex_unlock(q_arg->mtx);
-       return;
+        increment_mem(q_arg); 
+        allocMem(q_arg, 0);
     }
 
     q_arg->q[q_arg->ce] = e;
