@@ -4,18 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #define TYPE void*
-//Queue with FIFO principle, and with thread safe possiblity
-//struct: void* data, int size
-typedef struct{
-    //mutex for thread safety
-     pthread_mutex_t *mtx;
-    //current count of elements
-    long ce;
-    //beginning and raise size of queue
-    long s; 
-    //actual data
-    TYPE* q;
-} queue_t;
+
+typedef struct q_t queue_t;
 
 //pop: deletes the first element 
 void pop(queue_t*);
@@ -31,8 +21,6 @@ long mem_size(queue_t*);
 void out_q(queue_t*);
 
 //Factory-functions:
-//default: create()
-queue_t* create(); 
 //threadsafe: create(mutex*)
 queue_t* create_thr(pthread_mutex_t*);
 //initalise with specific size(it is the raise size too): create(int)

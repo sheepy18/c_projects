@@ -1,10 +1,17 @@
 #include "queue.h"
 
-queue_t* create_thr(pthread_mutex_t* m) {
-    queue_t* newq = create();
-    newq->mtx = m;
-    return newq;
-}
+//Queue with FIFO principle, and with thread safe possiblity
+//struct: void* data, int size
+struct q_t{
+    //mutex for thread safety
+     pthread_mutex_t *mtx;
+    //current count of elements
+    long ce;
+    //beginning and raise size of queue
+    long s; 
+    //actual data
+    TYPE* q;
+};
 
 queue_t* create() {
    queue_t* newq = (queue_t*) malloc(sizeof(queue_t)); 
@@ -13,6 +20,15 @@ queue_t* create() {
    newq->q = malloc(sizeof(TYPE) * newq->s);
    return newq;
 }
+
+queue_t* create_thr(pthread_mutex_t* m) {
+    queue_t* newq = create();
+    newq->mtx = m;
+    return newq;
+}
+
+//TODO implementation of void pop() 
+
 
 void push(queue_t* q_arg, TYPE e) {
     pthread_mutex_lock(q_arg->mtx);
