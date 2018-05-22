@@ -27,26 +27,31 @@ queue_t* create_thr(pthread_mutex_t* m) {
     return newq;
 }
 
+//not thread safe
 void increment(queue_t* q_arg){
-
+    (q_arg->ce)++;
 }
 
+//not thread safe
 void decrement(queue_t* q_arg) {
-
+    (q_arg->ce)--;
 }
 
-//TODO implementation of void pop() 
-void pop(queue_t* q_arg) {
+void allocMem(queue_t* q_arg) { 
     TYPE* oldMem;
-    pthread_mutex_lock(q_arg->mtx); 
     oldMem = q_arg->q;
-    (q_arg->ce)--; //TODO intern method decrement and increment
     q_arg->q = malloc(sizeof(TYPE) * q_arg->s);
     for(int i = 0; i < q_arg->ce; i++) {
        q_arg->q[i] = oldMem[i+1]; 
     }
-    pthread_mutex_unlock(q_arg->mtx);
     free(oldMem);
+}
+
+void pop(queue_t* q_arg) {
+    pthread_mutex_lock(q_arg->mtx); 
+    decrement(q_arg);
+    allocMem(q_arg);
+    pthread_mutex_unlock(q_arg->mtx);
 }
 
 void push(queue_t* q_arg, TYPE e) {
@@ -57,7 +62,7 @@ void push(queue_t* q_arg, TYPE e) {
     }
 
     q_arg->q[q_arg->ce] = e;
-    (q_arg->ce)++;
+    increment(q_arg);
     pthread_mutex_unlock(q_arg->mtx);
 }
 
@@ -85,6 +90,10 @@ TYPE get(queue_t* q_arg) {
 void out_q(queue_t* q_arg){ 
     pthread_mutex_lock(q_arg->mtx);
     printf("q:(");
+    if(q_arg->ce == 0) {    
+        printf(")\n");
+        return;
+    }
     for(int i = 0; i < q_arg->ce - 1; i++)
         printf("%li,",q_arg->q[i]);
     printf("%li)\n", q_arg->q[q_arg->ce -1]);
