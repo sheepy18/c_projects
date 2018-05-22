@@ -92,6 +92,7 @@ void out_q(queue_t* q_arg){
     printf("q:(");
     if(q_arg->ce == 0) {    
         printf(")\n");
+        pthread_mutex_unlock(q_arg->mtx); 
         return;
     }
     for(int i = 0; i < q_arg->ce - 1; i++)
