@@ -22,7 +22,7 @@ void out_q(queue_t*);
 
 //Factory-functions:
 //threadsafe: create(mutex*)
-queue_t* create_thr(pthread_mutex_t*);
+queue_t* create_thr(pthread_mutex_t*, long);
 //initalise with specific size(it is the raise size too): create(int)
 //Both: create(int, mutex*)
 #endif

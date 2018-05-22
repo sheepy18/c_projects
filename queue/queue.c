@@ -13,22 +13,22 @@ struct q_t{
     TYPE* q;
 };
 
-queue_t* create() {
+queue_t* create(long size) {
    queue_t* newq = (queue_t*) malloc(sizeof(queue_t)); 
-   newq->s = 10;
+   newq->s = size;
    newq->ce = 0;
    newq->q = malloc(sizeof(TYPE) * newq->s);
    return newq;
 }
 
-queue_t* create_thr(pthread_mutex_t* m) {
-    queue_t* newq = create();
+queue_t* create_thr(pthread_mutex_t* m, long size) {
+    queue_t* newq = create(size);
     newq->mtx = m;
     return newq;
 }
 
 void increment_mem(queue_t* q_arg) {
-    q_arg->s += q_arg->s;
+    q_arg->s +=  (q_arg->s*1.5);
 }
 
 //not thread safe
@@ -41,18 +41,20 @@ void decrement(queue_t* q_arg) {
     (q_arg->ce)--;
 }
 
-void allocMem(queue_t* q_arg, int isPop) { 
+void allocMem(queue_t* q_arg, int isPop) {  
+    TYPE* oldMem;
     if(!isPop) {
-        q_arg->q =(void*) realloc(q_arg->q, q_arg->s);
+        oldMem = realloc(q_arg->q, q_arg->s);
+        if(!oldMem)
+            printf("ERROR: Realloc failed in line 47!\n");
+        else
+            q_arg->q = oldMem;
         return;
     }
-    TYPE* oldMem;
     oldMem = q_arg->q;
-    q_arg->q = malloc(sizeof(TYPE) * q_arg->s);
     for(int i = 0; i < q_arg->ce; i++) {
        q_arg->q[i] = oldMem[i + 1]; 
     }
-    free(oldMem);
 }
 
 void pop(queue_t* q_arg) {
