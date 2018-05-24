@@ -3,7 +3,12 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+//Error code 
+#include "ecodes.h"
+
 #define TYPE void*
+
+
 
 typedef struct q_t queue_t;
 
