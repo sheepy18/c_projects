@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include "queue.h"
-
+pthread_mutex_t m;
 int testsSequential(long);
 int testsParallel(long, int);
 int simple_test();
 void* test_thr(void*);
 int testsParallel(long, int);
 void* thread(void*);
-pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
 long sum = 0;
 
 typedef struct {
@@ -56,14 +55,17 @@ void initQueue(long n, queue_t* q) {
 }
 
 int testsSequential(long n) {
+    pthread_mutex_init(&m, NULL); 
     queue_t* q = create_thr(&m,n);
     initQueue(n, q);
     sum = calculate(n, q);
+    pthread_mutex_destroy(&m);
     return 0;
 }
 
 int testsParallel(long n, int p) {
     args* a;
+    pthread_mutex_init(&m, NULL);
     queue_t* q = create_thr(&m,n); 
     pthread_t thr[p];
     initQueue(n, q);
@@ -77,7 +79,7 @@ int testsParallel(long n, int p) {
 
     for(int i = 0; i < p; i++)
         pthread_join(thr[i], NULL);
-
+    pthread_mutex_destroy(&m);
     return 0;
 }
 

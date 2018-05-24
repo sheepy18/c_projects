@@ -22,8 +22,10 @@ queue_t* create(long size) {
 }
 
 queue_t* create_thr(pthread_mutex_t* m, long size) {
+    pthread_mutex_lock(m);
     queue_t* newq = create(size);
     newq->mtx = m;
+    pthread_mutex_unlock(m);
     return newq;
 }
 
@@ -60,15 +62,16 @@ void allocMem(queue_t* q_arg, int isPop) {
 void pop(queue_t* q_arg) {
     pthread_mutex_lock(q_arg->mtx); 
     decrement(q_arg);
-    allocMem(q_arg, 1);
+//    allocMem(q_arg, 1);
     pthread_mutex_unlock(q_arg->mtx);
 }
 
 void push(queue_t* q_arg, TYPE e) {
     pthread_mutex_lock(q_arg->mtx);
     if(q_arg->s == q_arg->ce) {  
-        increment_mem(q_arg); 
-        allocMem(q_arg, 0);
+   //     increment_mem(q_arg); 
+ //       allocMem(q_arg, 0);
+        return;
     }
 
     q_arg->q[q_arg->ce] = e;

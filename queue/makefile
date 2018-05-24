@@ -19,4 +19,4 @@ $(OBJ)/test.o: test.c | $(OBJ)
 $(NAME): $(OBJ)/test.o $(OBJ)/queue.o
 		$(C) -o $@ $^ $(LIBS)
 run:
-	for number in `seq 1 100`; do ./$(NAME) $$number 1; done
+	for number in `seq 1 100`; do ./$(NAME) $$number 2; done
