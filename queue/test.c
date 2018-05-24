@@ -19,21 +19,26 @@ int main(int argc, char** argv) {
         return simple_test();
     long n = atoi(argv[1]);
     int p = atoi(argv[2]);
+    double speedup = 0;
     if(n < 1 || p > 96 || p < 1) {
         printf("ERROR: arguments are not valid! choose: p < 96, p > 0, n > 0\n");
         return 0;
     }
+    double t0 = 0; //change to gettime()
     int e = testsSequential(n);
+    double t1 = 1; //change to t0 - gettime()
     long seq_sum = sum;
     for(int i = 1; i <= p; i++) {
         sum = 0;
+        t0 = 0; //change to gettime()
         e = testsParallel(n, i);
-
+        double t2 = 1; //change to t0 - gettime()
         if(seq_sum != sum) {
             printf("ERROR: sequential sum: %li is not equal with parallel threads: %i sum: %li\n", seq_sum,i, sum);
             return 0;
         }
-        printf("sequential: %li, parallel: %li, threads %i\n", seq_sum, sum,i);
+        speedup = t1 / t2;
+        printf("sequential: %li, parallel: %li, threads %i, speedup: %lf\n", seq_sum, sum,i, speedup);
     }
 
     return e;
@@ -43,7 +48,7 @@ long calculate(int n, queue_t* q) {
     long sum_t = 0;
     for(int i = 0; i < n; i++) {
          sum_t += (long) get(q);
-         pop(q);
+        if(pop(q) == E_POP) return 0;
     }
     return sum_t;
 }
@@ -99,7 +104,7 @@ void* test_thr(void* arg) {
 }
 
 int simple_test() {
-	queue_t* q1 = create_thr(&m, 20);
+	queue_t* q1 = create_thr(&m, 10);
     printf("q1 size: %li \n", size(q1));
     for(int i = 0; i < 10; i++)
         push(q1,(void*) ((long)(i+1)));
@@ -115,7 +120,18 @@ int simple_test() {
     printf("size: %li \n", size(q1));
     out_q(q1);
     printf("memSize: %li\n", mem_size(q1));   
-    
+    int e = pop(q1);
+
+    if(e == E_POP) {
+        printf("ERROR in pop: %i\n", e);
+    }
+
+    void* get_e = get(q1);
+
+    if(get_e == E_GET) {
+        printf("ERROR in get: %i\n", get_e);
+    }
+
     pthread_t thr[2];
  
   
@@ -125,11 +141,16 @@ int simple_test() {
     pthread_join(thr[0], NULL);
     pthread_join(thr[1], NULL);
 
-    push(q1, (void*)(11));
-    push(q1, 21);
-    out_q(q1);
+    e = push(q1, (void*)(11));
+    if(e == E_PUSH) printf("ERROR in push: %i\n", e);
+    e = push(q1,(void*) 21);
+    if(e == E_PUSH) printf("ERROR in push: %i\n", e);
+
     printf("memSize: %li\n", mem_size(q1));   
     printf("size: %li \n", size(q1));
+
+    
+
     return 0;
 }
 

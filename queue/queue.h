@@ -13,9 +13,9 @@
 typedef struct q_t queue_t;
 
 //pop: deletes the first element 
-void pop(queue_t*);
+int pop(queue_t*);
 //push: adds an element(e) at the end
-void push(queue_t*, TYPE e);
+int push(queue_t*, TYPE e);
 //get: get the first element
 TYPE get(queue_t*);
 //size: get the current number of elements
@@ -26,8 +26,11 @@ long mem_size(queue_t*);
 void out_q(queue_t*);
 
 //Factory-functions:
-//threadsafe: create(mutex*)
-queue_t* create_thr(pthread_mutex_t*, long);
-//initalise with specific size(it is the raise size too): create(int)
+//TODO threadsafe: create(mutex*)
+//TODO initalise with specific size(it is the raise size too): create(int)
 //Both: create(int, mutex*)
+queue_t* create_thr(pthread_mutex_t*, long);
+
+//TODO cut: give just a little view of the queue as a new queue pointer but it is still the same queue
+
 #endif

@@ -59,24 +59,30 @@ void allocMem(queue_t* q_arg, int isPop) {
     }
 }
 
-void pop(queue_t* q_arg) {
+int pop(queue_t* q_arg) {
+    if(size(q_arg) == 0) 
+        return E_POP;
+
     pthread_mutex_lock(q_arg->mtx); 
     decrement(q_arg);
 //    allocMem(q_arg, 1);
     pthread_mutex_unlock(q_arg->mtx);
+    return SUCCESS;
 }
 
-void push(queue_t* q_arg, TYPE e) {
+int push(queue_t* q_arg, TYPE e) {
     pthread_mutex_lock(q_arg->mtx);
     if(q_arg->s == q_arg->ce) {  
    //     increment_mem(q_arg); 
  //       allocMem(q_arg, 0);
-        return;
+        pthread_mutex_unlock(q_arg->mtx);
+        return E_PUSH;
     }
 
     q_arg->q[q_arg->ce] = e;
     increment(q_arg);
     pthread_mutex_unlock(q_arg->mtx);
+    return SUCCESS;
 }
 
 long size(queue_t* q) {
@@ -93,6 +99,9 @@ long mem_size(queue_t* q ) {
     return mem;
 }
 TYPE get(queue_t* q_arg) {
+    if(size(q_arg) == 0)
+        return E_GET;
+
     pthread_mutex_lock(q_arg->mtx);
     TYPE first = q_arg->q[0];
     pthread_mutex_unlock(q_arg->mtx);
@@ -100,7 +109,8 @@ TYPE get(queue_t* q_arg) {
 }
 
 
-void out_q(queue_t* q_arg){ 
+void out_q(queue_t* q_arg){
+    if(size(q_arg) == 0) return;  
     pthread_mutex_lock(q_arg->mtx);
     printf("q:(");
     if(q_arg->ce == 0) {    
