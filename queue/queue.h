@@ -32,5 +32,6 @@ void out_q(queue_t*);
 queue_t* create_thr(pthread_mutex_t*, long);
 
 //TODO cut: give just a little view of the queue as a new queue pointer but it is still the same queue
-
+queue_t** cutView(queue_t*, int);
+queue_t* cutSingleView(queue_t*, long begin, long end);
 #endif

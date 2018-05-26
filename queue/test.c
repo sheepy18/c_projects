@@ -48,7 +48,8 @@ long calculate(int n, queue_t* q) {
     long sum_t = 0;
     for(int i = 0; i < n; i++) {
          sum_t += (long) get(q);
-        if(pop(q) == E_POP) return 0;
+        if(pop(q) == E_POP)
+            return 0;
     }
     return sum_t;
 }
@@ -97,7 +98,7 @@ void* test_thr(void* arg) {
 
     pthread_mutex_lock(&m);
     sum += sum_t;
-    //printf("Thread sum: %li with n: %li\n", sum_t, t);
+    printf("Thread sum: %li with n: %li\n", sum_t, t);
     pthread_mutex_unlock(&m);
    // free(a);
     return NULL;
@@ -108,11 +109,22 @@ int simple_test() {
     printf("q1 size: %li \n", size(q1));
     for(int i = 0; i < 10; i++)
         push(q1,(void*) ((long)(i+1)));
-   
+  
+    pop(q1); 
     printf("q1 get: %li \n", (long int) (get(q1)));
 	printf("q1 size: %li \n", size(q1));
     printf("q1 mem_size: %li \n", mem_size(q1));
     out_q(q1);
+    
+    pop(q1);
+    out_q(q1);
+    pop(q1);
+    out_q(q1);
+    pop(q1);
+    out_q(q1);
+    pop(q1);
+    out_q(q1);
+    
     int s = size(q1);
     for(int i = 0; i < s; i++)
         pop(q1);
@@ -149,8 +161,40 @@ int simple_test() {
     printf("memSize: %li\n", mem_size(q1));   
     printf("size: %li \n", size(q1));
 
-    
+    queue_t** vs = cutView(q1, 2); 
+    if(size(vs[0]) != 5)
+          printf("ERROR: vs size is %li\n", size(vs[0]));
+    if(size(vs[1]) != 5)
+          printf("ERROR: vs size is %li\n", size(vs[1]));
 
+    out_q(vs[0]);
+    out_q(vs[1]);
+
+
+
+
+    for(int i = 0; i < 5; i++) {
+        pop(vs[0]);
+        pop(vs[1]);
+    }
+    
+    for(int i = 0; i < 5; i++) {
+        push(vs[0], (void*) (50 + i));
+        push(vs[1], (void*)(60 + i));
+    }
+
+    pop(vs[0]);
+    pop(vs[0]);
+    pop(vs[1]);
+    pop(vs[1]);
+    printf("vs0: %li \n", get(vs[0]));
+    printf("vs1: %li \n", get(vs[1]));
+    out_q(vs[0]);
+    out_q(vs[1]);
+
+    out_q(q1);
+    printf("memSize: %li\n", mem_size(vs[1]));   
+    printf("size: %li \n", size(vs[1]));
     return 0;
 }
 
