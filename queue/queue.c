@@ -133,14 +133,14 @@ queue_t** cutView(queue_t* q_arg,int views_num){
 
 queue_t* cutSingleView(queue_t* q_arg, long begin, long end) {
     if((end - begin) > q_arg->ce) {
-        return NULL;
+       // return NULL;
     }
 
     pthread_mutex_t * m =  (pthread_mutex_t*) malloc(sizeof(pthread_mutex_t));
     
     queue_t* newQ = (queue_t*) malloc(sizeof(queue_t));
     newQ->q = (q_arg->q) + ((begin + q_arg->start) % q_arg->s);
-    newQ->ce = (end - begin);
+    newQ->ce = (q_arg->ce == 0)? 0 : (end - begin);
     newQ->s = end - begin;
     newQ->mtx = m;
     newQ->start = 0;

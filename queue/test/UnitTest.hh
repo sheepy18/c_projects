@@ -9,8 +9,13 @@
 class UnitTest : public CppUnit::TestFixture 
 {
     CPPUNIT_TEST_SUITE( UnitTest );
+    //every test runs in another TextFixture object
     CPPUNIT_TEST( testConstructor );
     CPPUNIT_TEST( testOnePushOnePop );
+    CPPUNIT_TEST( testTenPushElevenPop );
+    CPPUNIT_TEST( testPushAndPopMemoryRing );
+    CPPUNIT_TEST( testCutSingleViewEmptyQueue );
+  
     CPPUNIT_TEST_SUITE_END();
 
 
@@ -18,12 +23,20 @@ class UnitTest : public CppUnit::TestFixture
         pthread_mutex_t m;
         queue_t* q;
 
+        //runs before every test
+        void setUp();
+        //runs after every test
+        void tearDown();
+        
         void testConstructor();
         void testOnePushOnePop();
-        void setUp();
-        void tearDown();
-
-
+        void testTenPushElevenPop();
+        void testPushAndPopMemoryRing();
+        void testCutSingleViewEmptyQueue();
+        void testCutSingleViewPop();
+        void testCutSingleViewPush();
+        void testCutViewEmptyQueue();
+        void testCutView();
 };
 
 
