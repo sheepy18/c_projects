@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <assert.h>
-#include "queue.h"
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
+
+#include "../queue.h"
 
 void test_InitalQueue_DifferentSizes(int);
 void test_pushOnePopOne();
@@ -11,11 +15,21 @@ void test_pushSixPopSeven();
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char** argv) {
-    test_InitalQueue_DifferentSizes(20);
-    test_pushOnePopOne();
-    test_pushSixPopSeven();
-    printf("Unit test was successful!\n"); 
-    return 0;
+ // Get the top level suite from the registry
+  CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry().makeTest();
+
+  // Adds the test to the list of test to run
+  CppUnit::TextUi::TestRunner runner;
+  runner.addTest( suite );
+
+  // Change the default outputter to a compiler error format outputter
+  runner.setOutputter( new CppUnit::CompilerOutputter( &runner.result(),
+                                                       std::cerr ) );
+  // Run the tests.
+  bool wasSucessful = runner.run();
+
+  // Return error code 1 if the one of test failed.
+  return wasSucessful ? 0 : 1;
 }
 
 queue_t* initQueue(long mem) {
@@ -104,11 +118,11 @@ void test_pushSixPopSeven() {
     assert(*v == 6);
 
     pop(q);
-    v = get(q);
+    v =  (int*) get(q);
     assert(v == E_GET);
 
     assert(pop(q) == E_POP);
-    v = get(q);
+    v = (int*)get(q);
     assert(v == E_GET);
 
     assert(size(q) == 0);

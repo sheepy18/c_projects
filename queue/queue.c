@@ -19,7 +19,7 @@ queue_t* create(long size) {
    queue_t* newq = (queue_t*) malloc(sizeof(queue_t)); 
    newq->s = size;
    newq->ce = 0;
-   newq->q = malloc(sizeof(TYPE) * newq->s);
+   newq->q = (TYPE*) malloc(sizeof(TYPE) * newq->s);
    newq->start = 0;
    return newq;
 }
@@ -47,19 +47,6 @@ void decrement(queue_t* q_arg) {
 }
 
 void allocMem(queue_t* q_arg, int isPop) {  
-    TYPE* oldMem;
-    if(!isPop) {
-        oldMem = realloc(q_arg->q, q_arg->s);
-        if(!oldMem)
-            printf("ERROR: Realloc failed in line 47!\n");
-        else
-            q_arg->q = oldMem;
-        return;
-    }
-    oldMem = q_arg->q;
-    for(int i = 0; i < q_arg->ce; i++) {
-       q_arg->q[i] = oldMem[i + 1]; 
-    }
 }
 
 int pop(queue_t* q_arg) {
@@ -131,7 +118,7 @@ queue_t** cutView(queue_t* q_arg,int views_num){
     if(views_num == 0) {
         return NULL;
     }
-    queue_t** views = malloc(sizeof(queue_t*) * views_num);
+    queue_t** views = (queue_t**) malloc(sizeof(queue_t*) * views_num);
     long current = 0;
     long part = ((q_arg->ce) / views_num);
     long rest = (q_arg->ce) % views_num;
@@ -149,9 +136,9 @@ queue_t* cutSingleView(queue_t* q_arg, long begin, long end) {
         return NULL;
     }
 
-    pthread_mutex_t * m = malloc(sizeof(pthread_mutex_t));
+    pthread_mutex_t * m =  (pthread_mutex_t*) malloc(sizeof(pthread_mutex_t));
     
-    queue_t* newQ = malloc(sizeof(queue_t));
+    queue_t* newQ = (queue_t*) malloc(sizeof(queue_t));
     newQ->q = (q_arg->q) + ((begin + q_arg->start) % q_arg->s);
     newQ->ce = (end - begin);
     newQ->s = end - begin;

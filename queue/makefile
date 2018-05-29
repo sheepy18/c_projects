@@ -1,24 +1,29 @@
-FLAGS=-g -Wall -std=c11 -c
-LIBS= -lpthread
+FLAGS=-g -Wall -std=c++11 -c
+LIBS= -lpthread -lcppunit
 OBJ=obj
-NAME=UnitTest
-C=gcc
+NAME=Test
+DIR=test
+CXX=g++
 
 .PHONY: default clean
-default: $(NAME)
+default: $(DIR)/$(NAME)
 clean:
-		rm -rf $(NAME) $(OBJ)
+		rm -rf $(DIR)/$(NAME) $(OBJ)
 
 $(OBJ):
 		mkdir -p $(OBJ)
 $(OBJ)/queue.o: queue.c | $(OBJ)
-		$(C) $(FLAGS) -o $@ $< 
-$(OBJ)/$(NAME).o: $(NAME).c | $(OBJ)
-		$(C) $(FLAGS) -o $@ $< 
+		$(CXX) $(FLAGS) -o $@ $< 
 
-$(NAME): $(OBJ)/$(NAME).o $(OBJ)/queue.o
-		$(C) -o $@ $^ $(LIBS)
+$(OBJ)/$(NAME).o: $(DIR)/$(NAME).c | $(OBJ)
+		$(CXX) $(FLAGS) -o $@ $<
+
+$(OBJ)/UnitTest.o: $(DIR)/UnitTest.cpp | $(OBJ)
+		$(CXX) $(FLAGS) -o $@ $<
+
+$(DIR)/$(NAME): $(OBJ)/$(NAME).o $(OBJ)/queue.o $(OBJ)/UnitTest.o
+		$(CXX) -o $@ $^ $(LIBS)
 
 
 run:
-	./$(NAME)
+	./$(DIR)/$(NAME)
